@@ -6,4 +6,15 @@ body {
 
 a {
 	color: #00B7FF;
+	background-color: #594a41;
+}
+
+.panel {
+	background-color: #f2e2e2;
+	padding: 2em;
+	color: black;
+	box-shadow: 0 0 6px 1px #0006;
+	border: solid 2px #fff8;
+	border-radius: 1px;
+	margin: 2em;
 }
