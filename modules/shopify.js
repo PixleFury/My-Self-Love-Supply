@@ -5,7 +5,7 @@ class ShopifyServer {
 	constructor() {
 
 	}
-	
+
 	auth(key, password, version, shop) {
 		this.api_settings = {
 			key: key, password, password, version: version, shop: shop
@@ -102,6 +102,11 @@ class ShopifyServer {
 
 	update_product(id) {
 		let product = this.get_product(id);
+		console.log(product);
+		if (product == null || product == undefined) {
+			// res.render("error", {code: 500, status: "invalid product id"});
+			return;
+		}
 
 		let query = [
 			"mutation {",
@@ -117,8 +122,10 @@ class ShopifyServer {
 			"}"
 		].join("\n");
 
+		console.log(query);
+
 		this.query(query, data => {
-			res.json({});
+			// res.json({});
 		});
 	}
 }

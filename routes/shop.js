@@ -56,19 +56,28 @@ router.get("/api/product/:id", (req, res) => {
 
 // Update product info
 router.post("/api/product/:id", (req, res) => {
-	console.log("\n\n");
 	console.log(req.body);
-	console.log("\n\n");
 	let product = api.get_product(req.params.id);
 
 	if ("title" in req.body && req.body.title != null) {
-		product.set_title(req.body.title)
+		product.title = req.body.title;
+		product.title_changed = true;
 	}
 	if ("desc" in req.body && req.body.desc != null) {
-		product.set_desc(req.body.desc)
+		product.desc = req.body.desc;
+		product.desc_changed = true;
+	}
+	if ("icon" in req.body && req.body.desc != null) {
+		product.icon = req.body.icon;
+		product.icon_changed = true;
+	}
+	if ("price" in req.body && req.body.price != null) {
+		product.price = req.body.price;
+		product.price_changed = true;
 	}
 
-	api.update_product(req.params.id);
+	// api.update_product(req.params.id);
+	res.redirect(307, `/shop/${product.api_id}`);
 });
 
 // Create product

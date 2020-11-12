@@ -9,8 +9,13 @@
 </head>
 <body>
 	<main>
-		<h1><%= title %></h1>
-		<p></p>
+		<div id="product-form" class="panel">
+			<h1><%= title %></h1>
+			<p>£<%= price %></p>
+			<img src="<%= icon %>">
+			<p><%= desc %></p>
+			<a href="/shop/<%= api_id %>?editor">Go to editor.</a>
+		</div>
 	</main>
 </body>
 </html>

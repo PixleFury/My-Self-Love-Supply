@@ -12,6 +12,9 @@ body {
 a {
 	color: #00B7FF;
 	background-color: #594a41;
+	padding: 0.5em 2em;
+	border-radius: 2em;
+	width: max-content;
 }
 
 .panel {

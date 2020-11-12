@@ -14,13 +14,17 @@
 <body>
 	<main>
 		<form id="product-form" class="panel">
-			<input id="api_id" type="text" readonly value="<%= api_id %>">
+			<h1>Update Product Information</h1>
+			<input id="api_id" type="text" readonly style="display: none;" value="<%= api_id %>">
 
 			<label for="title"><h2>Product Name</h2></label>
 			<input id="title" type="text" value="<%= title %>">
 
 			<label for="desc"><h2>Description</h2></label>
 			<textarea id="desc"><%= desc %></textarea>
+
+			<label for="price"><h2>Price (£)</h2></label>
+			<input id="price" type="number" step="0.01" value="<%= price %>">
 
 			<h2>Upload an icon</h2>
 			<div class="file-uploader">
