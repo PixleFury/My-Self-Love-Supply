@@ -2,7 +2,8 @@ const https = require("https"), path = require("path");
 const express = require("express");
 const { request } = require("express");
 const router = express.Router();
-const graphql = require("shopify");
+const shopify = require("../modules/shopify.js");
+const { RSA_NO_PADDING } = require("constants");
 
 const api_settings = {
 	key: "021b74c9a0db6e2a2ae1521ee80ebd82",
@@ -11,20 +12,36 @@ const api_settings = {
 	shop: "peexee-corp-dev-store"
 }
 
-const api = new graphql.ShopifyServer(
+const api = new shopify.ShopifyServer(
 	api_settings.key, api_settings.password,
 	api_settings.version, api_settings.shop
-)
+);
 
 // Shop homepage
 router.get("/", (req, res) => {
-	res.sendFile("shop.html", {root: path.join(__dirname, "../public")});
-})
+	if ("editor" in req.body) {
+		res.sendFile("shop.html", {root: path.join(__dirname, "../public")});
+		console.log("Shop Editor");
+	} else {
+		res.sendFile("shop.html", {root: path.join(__dirname, "../public")});
+	}
+});
+
+router.get("/:id", (req, res) => {
+	let product = api.get_product(req.params.id);
+	if (product == null) {
+		res.render("error", {code: 404, status: "Not found"});
+	} else if ("editor" in req.query) {
+		res.render("shop-product-editor", product);
+	} else {
+		res.render("shop-product", product);
+	}
+});
 
 // Get all products
 router.get("/api/products", (req, res) => {
 	res.json(api.products);
-})
+});
 
 // Get indiviual product
 router.get("/api/product/:id", (req, res) => {
@@ -34,10 +51,13 @@ router.get("/api/product/:id", (req, res) => {
 	} else {
 		res.status(404).send("Product not found!");
 	}
-})
+});
 
 // Update product info
 router.post("/api/product/:id", (req, res) => {
+	console.log("\n\n");
+	console.log(req.body);
+	console.log("\n\n");
 	let product = api.get_product(req.params.id);
 
 	if ("title" in req.body && req.body.title != null) {
@@ -48,7 +68,7 @@ router.post("/api/product/:id", (req, res) => {
 	}
 
 	api.update_product(req.params.id);
-})
+});
 
 // Create product
 router.post("/api/create-product", (req, res) => {
@@ -73,6 +93,6 @@ router.post("/api/create-product", (req, res) => {
 		console.log(data);
 		res.json({id: data.data.productCreate.product.id});
 	});
-})
+});
 
 module.exports = router;

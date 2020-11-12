@@ -1,3 +1,8 @@
+* {
+	padding: 0; margin: 0;
+	box-sizing: border-box;
+}
+
 body {
 	padding: 50px;
 	font-size: 14px;
@@ -13,8 +18,57 @@ a {
 	background-color: #f2e2e2;
 	padding: 2em;
 	color: black;
-	box-shadow: 0 0 6px 1px #0006;
+	box-shadow: 0 0 4px 1px #0004;
 	border: solid 2px #fff8;
 	border-radius: 1px;
 	margin: 2em;
+}
+
+.panel :is(input, textarea, button) {
+	background: white;
+	color: #594a41;
+	margin: 0.5em 0;
+	margin-bottom: 1.5em;
+	padding: 0.5em;
+	border-radius: 0.4em;
+	font-size: 1rem;
+	border: none;
+	box-shadow: 0 0 4px #0004;
+	font-family: inherit;
+}
+
+.panel *:last-child {
+	margin-bottom: 0;
+}
+
+.panel button {
+	width: max-content;
+}
+
+textarea {
+	resize: vertical;
+}
+
+.file-uploader {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 0;
+	align-items: center;
+	background: white;
+	margin: 0.5em 0;
+	margin-bottom: 1.5em;
+	padding: 0.5em;
+	border-radius: 0.4em;
+	font-size: 1rem;
+	border: none;
+	box-shadow: 0 0 4px #0004;
+	font-family: inherit;
+}
+
+.file-uploader > img {
+	width: 200px;
+}
+
+.file-uploader > input[type=file] {
+	margin: 0;
 }

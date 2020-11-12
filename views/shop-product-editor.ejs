@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title><%= title %></title>
+
+	<link rel="stylesheet" href="/styles/style.css">
+	<link rel="stylesheet" href="/styles/shop-product-editor.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="/scripts/editor/product.js"></script>
+</head>
+<body>
+	<main>
+		<form id="product-form" class="panel">
+			<input id="api_id" type="text" readonly value="<%= api_id %>">
+
+			<label for="title"><h2>Product Name</h2></label>
+			<input id="title" type="text" value="<%= title %>">
+
+			<label for="desc"><h2>Description</h2></label>
+			<textarea id="desc"><%= desc %></textarea>
+
+			<h2>Upload an icon</h2>
+			<div class="file-uploader">
+				<img id="icon-preview" src="<%= icon %>">
+				<input id="icon" type="file">
+			</div>
+			<div>
+				<button id="update" type="submit">Update</button>
+				<button id="discard" type="submit">Discard</button>
+			</div>
+		</form>
+	</main>
+</body>
+</html>

@@ -1,0 +1,10 @@
+#product-form {
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+	width: 800px;
+}
+
+#icon {
+	box-shadow: none;
+}
