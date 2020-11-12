@@ -13,7 +13,7 @@ $(() => {
 
 	$("#update").click(event => {
 		let data = $("#product-form").serializeArray();
-		$.post(`/shop/api/product/${data.api_id}`, JSON.stringify(data));
+		$.post(`/shop/api/product/${data.api_id}`, JSON.stringify(data), );
 	});
 
 	$("#discard").click(event => {

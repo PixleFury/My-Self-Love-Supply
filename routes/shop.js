@@ -12,7 +12,8 @@ const api_settings = {
 	shop: "peexee-corp-dev-store"
 }
 
-const api = new shopify.ShopifyServer(
+const api = shopify.server;
+api.auth(
 	api_settings.key, api_settings.password,
 	api_settings.version, api_settings.shop
 );

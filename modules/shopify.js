@@ -2,7 +2,11 @@ const https = require("https"), path = require("path");
 const { query } = require("express");
 
 class ShopifyServer {
-	constructor(key, password, version, shop) {
+	constructor() {
+
+	}
+	
+	auth(key, password, version, shop) {
 		this.api_settings = {
 			key: key, password, password, version: version, shop: shop
 		}
@@ -137,5 +141,5 @@ class Product {
 	};
 }
 
-exports.ShopifyServer = ShopifyServer;
+exports.server = new ShopifyServer();
 exports.Product = Product;
