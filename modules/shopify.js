@@ -1,30 +1,44 @@
 const https = require("https"), path = require("path");
 const { query } = require("express");
+const e = require("express");
+
+
+// const api_converter_map = {
+// 	"product": ShopifyProduct,
+// 	"image": ShopifyImage,
+// 	"variant": ShopifyVariant,
+// }
+
 
 class ShopifyServer {
-	constructor() {
-
-	}
-
-	auth(key, password, version, shop) {
-		this.api_settings = {
-			key: key, password, password, version: version, shop: shop
-		}
-		this.api_url = `https://${this.api_settings.shop}.myshopify.com/admin/api/${this.api_settings.version}/graphql.json`;
-		this.auth = Buffer.from(`${this.api_settings.key}:${this.api_settings.password}`, "utf-8").toString("base64");
+	constructor(version, shop) {
+		this.api_version = version;
+		this.shop_name = shop;
 
 		this.products = [];
-
-		this.populate_products();
 	}
 
-	query(query, callback) {
-		let req = https.request(this.api_url, {method: "POST"}, (res) => {
+	auth(key, password) {
+		this.api_url = `https://${this.shop_name}.myshopify.com/admin/api/${this.api_version}/`;
+		this.auth = Buffer.from(`${key}:${password}`, "utf-8").toString("base64");
+	}
+
+	api_get(resource, params, callback) {
+		let url_arr = [this.api_url, `${resource}.json`]
+
+		if (params.length > 0) {
+			url_arr.push("?fields=");
+			url_arr.push(params.join());
+		}
+
+		let url = url_arr.join("");
+		console.log(url);
+
+		let req = https.request(url, {method: "GET"}, res => {
 			let data = "";
 	
 			res.on("data", d => data += d)
 			res.on("end", () => {
-				console.log(data);
 				callback(JSON.parse(data))
 			})
 	
@@ -35,118 +49,139 @@ class ShopifyServer {
 	
 		req.setHeader("Authorization", `Basic ${this.auth}`);
 		req.setHeader("Content-Type", "application/json");
-		req.end(JSON.stringify({query: query}))
+		req.end();
 	}
 
-	populate_products() {
-		this.products.length = 0; // Clear array
+	api_put(resource, object, callback) {
+		let url = this.api_url + `${resource}.json`;
+		console.log(url);
 
-		this.query(
-			`query { shop { products(first: 5) {
-				edges { node {
-					id
-					title
-					descriptionHtml
-					featuredImage {originalSrc}
-					variants(first: 1) {
-						edges { node { price } }
-					}
-				} }
-			} } }`
-		, data => {
-			let x;
-			if ("data" in data && data.data != null) {x = data.data;}
-			if ("shop" in x && x.shop != null) {x = x.shop;}
-			if ("products" in x && x.products != null) {x = x.products;}
-			if ("edges" in x && x.edges != null) {x = x.edges;}
+		let req = https.request(url, {method: "PUT"}, res => {
+			let data = "";
+	
+			res.on("data", d => data += d)
+			res.on("end", () => {
+				callback(data)
+			})
+	
+			res.on("error", (error) => {
+				console.log("" + error);
+			})
+		});
 
-			x.forEach(productData => {
-				if ("node" in productData && productData.node != null) {productData = productData.node;}
+		req.setHeader("Authorization", `Basic ${this.auth}`);
+		req.setHeader("Content-Type", "application/json");
+		req.end(JSON.stringify(object))
+	}
 
-				let product = new Product();
+	from_json(obj, type) {
+		let fields = {};
+		let api_id;
 
-				if ("id" in productData && productData.id != null) {
-					let arr = productData.id.split("/");
-					product.api_id = arr[4];
-				}
-				if ("title" in productData && productData.title != null) {
-					product.title = productData.title;
-				}
-				if ("descriptionHtml" in productData && productData.descriptionHtml != null) {
-					product.desc = productData.descriptionHtml;
-				}
-				if ("featuredImage" in productData && productData.featuredImage != null) {
-					if ("originalSrc" in productData.featuredImage && productData.featuredImage.originalSrc != null) {
-						product.icon = productData.featuredImage.originalSrc;
-					}
-				}
-				if ("variants" in productData && productData.variants != null) {
-					if ("edges" in productData.variants && productData.variants.edges != null) {
-						if ("node" in productData.variants.edges && productData.variants.edges.node != null) {
-							if ("price" in productData.variants.edges.node && productData.variants.edges.node.price != null) {
-								product.price = productData.variants.edges.node.price;
-							}
-						}
-					}
-				}
+		for (const k in obj) {
+			if (k == "id") {
+				api_id = obj.id;
+				continue;
+			}
 
-				this.products.push(product);
-			});
+			console.log(`${k}: ${typeof(obj[k])}`);
+			if (typeof(obj[k]) == "object") {
+				console.log(obj[k]);
+				if (Array.isArray(obj[k])) {
+					fields[k] = [];
+					obj[k].forEach(item => fields[k].push(
+						this.from_json(item, {"images": "Image", "products": "Product", "variants": "ProductVariant"}[k])
+					));
+				} else { // Plain object
+					fields[k] = this.from_json(
+						obj[k],
+						{"images": "Image", "products": "Product", "variants": "ProductVariant"}[k]
+					);
+				}
+			} else {
+				fields[k] = obj[k];
+			}
+		}
+
+		let x = new ShopifyObject(api_id, type, fields); 
+		console.log(x);
+		return x;
+	}
+
+	populate_from_api() {
+		this.products.length = 0; // Clear list
+		this.api_get("products", ["id", "title", "body_html", "variants", "images"], data => {
+			if ("products" in data) {
+				data.products.forEach(product => {
+					let shopify_product = this.from_json(product, "Product");
+					this.products.push(shopify_product);
+					// console.log(shopify_product);
+				});
+			}
 		});
 	}
 
 	get_product(id) {
-		// id = `gid://shopify/Product/${id}`
 		return this.products.find(product => product.api_id == id);
 	}
 
 	update_product(id) {
 		let product = this.get_product(id);
-		console.log(product);
 		if (product == null || product == undefined) {
-			// res.render("error", {code: 500, status: "invalid product id"});
+			res.render("error", {code: 500, status: "invalid product id"});
 			return;
 		}
 
-		let query = [
-			"mutation {",
-				"productUpdate(input: {",
-				`id: "gid://shopify/Product/${product.api_id}"`,
-				(product.title_changed) ? `title: "${product.title}"` : "",
-				(product.desc_changed) ? `descriptionHtml: "${product.desc}"` : "",
-			"}) {",
-				"userErrors {",
-					"field",
-					"message",
-				"}",
-			"}"
-		].join("\n");
+		let json = {id: id};
 
-		console.log(query);
+		if (product.is_dirty("title")) {json["title"] = product.get("title");}
+		if (product.is_dirty("desc")) {json["body_html"] = product.get("desc");}
+		if (product.is_dirty("images")) {json["images"] = product.get("images");}
 
-		this.query(query, data => {
-			// res.json({});
-		});
+		this.api_put(`products/${id}`, {product: json}, data => console.log(data));
+		product.clean();
 	}
 }
 
-class Product {
-	constructor() {
-		this.api_id = "NO_API_ID";
-		
-		this.title = "NO_TITLE";
-		this.title_changed = false;
-		
-		this.desc = "NO_DESCRIPTION";
-		this.desc_changed = false;
 
-		this.price = 0;
-		this.price_changed = false;
+class ShopifyObject {
+	constructor(api_id, type, fields) {
+		this.api_id = api_id;
+		this.type = type;
 
-		this.icon = "NO_ICON";
-		this.icon_changed = false;
-	};
+		this.fields = {};
+		for (const k in fields) {
+			this.fields[k] = {value: fields[k], dirty: false};
+		}
+	}
+
+	get(key) {
+		return this.fields[key].value;
+	}
+
+	set(key, value) {
+		this.fields[key].value = value;
+		this.fields[key].dirty = true;
+	}
+
+	is_dirty(key) {
+		return this.fields[key].dirty;
+	}
+
+	clean() {
+		for (const k in this.fields) {
+			this.fields[k].dirty = false;
+		}
+	}
+
+	flat_fields() {
+		let flat = {api_id: this.api_id};
+		for (const k in this.fields) {
+			flat[k] = this.fields[k].value;
+		}
+		return flat;
+	}
 }
 
-exports.server = new ShopifyServer();
-exports.Product = Product;
+
+exports.ShopifyServer = ShopifyServer

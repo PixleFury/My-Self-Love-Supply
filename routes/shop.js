@@ -12,11 +12,9 @@ const api_settings = {
 	shop: "peexee-corp-dev-store"
 }
 
-const api = shopify.server;
-api.auth(
-	api_settings.key, api_settings.password,
-	api_settings.version, api_settings.shop
-);
+const api = new shopify.ShopifyServer(api_settings.version, api_settings.shop);
+api.auth(api_settings.key, api_settings.password);
+api.populate_from_api();
 
 // Shop homepage
 router.get("/", (req, res) => {
@@ -33,9 +31,9 @@ router.get("/:id", (req, res) => {
 	if (product == null) {
 		res.render("error", {code: 404, status: "Not found"});
 	} else if ("editor" in req.query) {
-		res.render("shop-product-editor", product);
+		res.render("shop-product-editor", product.flat_fields());
 	} else {
-		res.render("shop-product", product);
+		res.render("shop-product", product.flat_fields());
 	}
 });
 
@@ -60,23 +58,19 @@ router.post("/api/product/:id", (req, res) => {
 	let product = api.get_product(req.params.id);
 
 	if ("title" in req.body && req.body.title != null) {
-		product.title = req.body.title;
-		product.title_changed = true;
+		product.set("title", req.body.title);
 	}
 	if ("desc" in req.body && req.body.desc != null) {
-		product.desc = req.body.desc;
-		product.desc_changed = true;
+		product.set("desc", req.body.desc);
 	}
-	if ("icon" in req.body && req.body.desc != null) {
-		product.icon = req.body.icon;
-		product.icon_changed = true;
+	if ("icon" in req.body && req.body.icon != null) {
+		product.set("icon", req.body.icon);
 	}
 	if ("price" in req.body && req.body.price != null) {
-		product.price = req.body.price;
-		product.price_changed = true;
+		product.set("price", req.body.price);
 	}
 
-	// api.update_product(req.params.id);
+	api.update_product(req.params.id);
 	res.redirect(307, `/shop/${product.api_id}`);
 });
 
