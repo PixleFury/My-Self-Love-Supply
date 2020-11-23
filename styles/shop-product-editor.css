@@ -1,0 +1,19 @@
+#product-form {
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+	width: max-content;
+	/* align-items: center; */
+}
+
+#product-form > * {
+	margin-bottom: 1rem;
+}
+
+#icon {
+	box-shadow: none;
+}
+
+img {
+	width: max-content;
+}
