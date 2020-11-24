@@ -52,6 +52,10 @@ class ShopifyServer {
 		req.end();
 	}
 
+	api_post(resource, object, callback) {
+
+	}
+
 	api_put(resource, object, callback) {
 		let url = this.api_url + `${resource}.json`;
 		console.log(url);
@@ -74,46 +78,15 @@ class ShopifyServer {
 		req.end(JSON.stringify(object))
 	}
 
-	from_json(obj, type) {
-		let fields = {};
-		let api_id;
-
-		for (const k in obj) {
-			if (k == "id") {
-				api_id = obj.id;
-				continue;
-			}
-
-			console.log(`${k}: ${typeof(obj[k])}`);
-			if (typeof(obj[k]) == "object") {
-				console.log(obj[k]);
-				if (Array.isArray(obj[k])) {
-					fields[k] = [];
-					obj[k].forEach(item => fields[k].push(
-						this.from_json(item, {"images": "Image", "products": "Product", "variants": "ProductVariant"}[k])
-					));
-				} else { // Plain object
-					fields[k] = this.from_json(
-						obj[k],
-						{"images": "Image", "products": "Product", "variants": "ProductVariant"}[k]
-					);
-				}
-			} else {
-				fields[k] = obj[k];
-			}
-		}
-
-		let x = new ShopifyObject(api_id, type, fields); 
-		console.log(x);
-		return x;
-	}
-
 	populate_from_api() {
 		this.products.length = 0; // Clear list
 		this.api_get("products", ["id", "title", "body_html", "variants", "images"], data => {
 			if ("products" in data) {
-				this.products = data.products;
-				console.log(this.products);
+				data.products.forEach(product => {
+					let shopify_product = new ShopifyProduct(product);
+					this.products.push(shopify_product);
+					// console.log(shopify_product);
+				});
 			}
 		});
 	}
@@ -129,59 +102,80 @@ class ShopifyServer {
 			return;
 		}
 
-		let json = product.dirty_fields();
-		json.id = product.api_id;
-
+		let json = product.get_update_json();
 		this.api_put(`products/${id}`, {product: json}, data => console.log(data));
-		//product.clean();
 	}
 }
-
 
 class ShopifyObject {
-	constructor(api_id, type, fields) {
+	constructor(api_id, type) {
 		this.api_id = api_id;
 		this.type = type;
-
-		this.fields = fields;
-	}
-
-	get(key) {
-		return this.fields[key].value;
-	}
-
-	set(key, value) {
-		this.fields[key] = value;
-		this.fields[key].dirty = true;
-	}
-
-	is_dirty(key) {
-		return this.fields[key].dirty;
-	}
-
-	clean() {
-		for (const k in this.fields) {
-			this.fields[k].dirty = false;
-		}
-	}
-
-	flat_fields() {
-		let flat = {api_id: this.api_id};
-		for (const k in this.fields) {
-			if (typeof(this.fields[k].value) == "object") {
-				if (Array.isArray(this.fields[k].value)) {
-					flat[k] = [];
-					this.fields[k].value.forEach(val => flat[k].push(typeof(val) == "object" ? val.flat_fields() : val));
-				} else {
-					flat[k] = this.fields[k].value.flat_fields;
-				}
-			} else {
-				flat[k] = this.fields[k].value;
-			}
-		}
-		return flat;
 	}
 }
 
+class ShopifyProduct extends ShopifyObject {
+	constructor(fields) {
+		super(fields["id"], "Product");
 
-exports.ShopifyServer = ShopifyServer
+		this.title = fields["title"];
+		this.description = fields["body_html"];
+
+		this.variants = [];
+		fields["variants"].forEach(variant => this.variants.push(new ShopifyProductVariant(variant)));
+
+		this.images = [];
+		fields["images"].forEach(img => this.images.push(new ShopifyImage(img)));
+	}
+
+	get_update_json() {
+		let variants = [];
+		this.variants.forEach(variant => variants.push(variant.get_update_json()));
+
+		let images = [];
+		this.images.forEach(img => images.push(img.get_update_json()));
+
+		return {
+			id: this.api_id,
+			title: this.title,
+			body_html: this.description,
+			variants: variants,
+			images: images
+		}
+	}
+}
+
+class ShopifyImage extends ShopifyObject {
+	constructor(fields) {
+		super(fields["id"], "Image");
+
+		this.src = fields["attachment"];
+	}
+
+	get_update_json() {
+		return {
+			id: this.api_id,
+			attachment: this.src
+		}
+	}
+}
+
+class ShopifyProductVariant extends ShopifyObject {
+	constructor(fields) {
+		super(fields["id"], "ProductVariant");
+
+		this.price = fields["price"];
+	}
+
+	get_update_json() {
+		return {
+			id: this.api_id,
+			price: this.price
+		}
+	}
+}
+
+exports.ShopifyServer = ShopifyServer;
+exports.ShopifyProduct = ShopifyProduct;
+exports.ShopifyImage = ShopifyImage;
+exports.ShopifyProductVariant = ShopifyProductVariant;

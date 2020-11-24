@@ -18,15 +18,11 @@ api.populate_from_api();
 
 // Shop homepage
 router.get("/", (req, res) => {
-	let products = [];
-	api.products.forEach(product => products.push(product.flat_fields()));
-	res.render("shop", {editor: false, products: products});
+	res.render("shop", {editor: false, products: api.products});
 });
 
 router.get("/editor", (req, res) => {
-	let products = [];
-	api.products.forEach(product => products.push(product.flat_fields()));
-	res.render("shop", {editor: true, products: products});
+	res.render("shop", {editor: true, products: api.products});
 });
 
 router.get("/:id", (req, res) => {
@@ -34,7 +30,7 @@ router.get("/:id", (req, res) => {
 	if (product == null) {
 		res.render("error", {code: 404, status: "Not found"});
 	} else {
-		res.render("shop-product", {product: product.flat_fields()});
+		res.render("shop-product", {product: product});
 	}
 });
 
@@ -43,7 +39,7 @@ router.get("/:id/editor", (req, res) => {
 	if (product == null) {
 		res.render("error", {code: 404, status: "Not found"});
 	} else {
-		res.render("shop-product-editor", {editor: true, product: product.flat_fields()});
+		res.render("shop-product-editor", {editor: true, product: product});
 	}
 });
 
@@ -68,20 +64,27 @@ router.post("/api/product/:id", (req, res) => {
 	let product = api.get_product(req.params.id);
 
 	if ("title" in req.body && req.body.title != null) {
-		product.set("title", req.body.title);
+		product.title = req.body.title;
 	}
 	if ("desc" in req.body && req.body.desc != null) {
-		product.set("body_html", req.body.desc);
+		product.description = req.body.desc;
 	}
-	if ("icon" in req.body && req.body.icon != null) {
-		let images = product.get("images");
-		images[0].set("src", req.body.icon);
+	if ("icon" in req.body && req.body.images != null) {
+		req.body.images.forEach(image => {
+			if ("api_id" in image) {
+				product.images.find(img => img.api_id == image.api_id).src, image.src;
+			} else {
+				api.api_post(`/products/${product.api_id}/images`, {"image": {"attachment": image.src}}, data => {
+					product.images.push(new api.ShopifyImage(data.image));
+				});
+			}
+		});
 	}
 	if ("price" in req.body && req.body.price != null) {
-		let variants = product.get("variants");
-		variants[0].set("price", req.body.price);
+		product.variants[0].price = req.body.price;
 	}
 
+	console.log(product.get_update_json());
 	api.update_product(req.params.id);
 	res.redirect(307, `/shop/${product.api_id}`);
 });

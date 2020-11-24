@@ -27,3 +27,21 @@
 	padding: 1em 2em;
 	font-size: 16px;
 }
+
+.dropdown {
+	position: relative;
+	overflow: visible;
+}
+
+.dropdown .dropdown-content {
+	display: none;
+	top: 100%; left: 0;
+	position: absolute;
+	z-index: 1;
+	list-style: none;
+	width: max-content;
+}
+
+.dropdown:hover .dropdown-content {
+	display: block;
+}
