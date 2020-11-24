@@ -20,7 +20,6 @@ api.populate_from_api();
 router.get("/", (req, res) => {
 	if ("editor" in req.body) {
 		res.sendFile("shop.html", {root: path.join(__dirname, "../public")});
-		console.log("Shop Editor");
 	} else {
 		res.sendFile("shop.html", {root: path.join(__dirname, "../public")});
 	}
@@ -30,10 +29,17 @@ router.get("/:id", (req, res) => {
 	let product = api.get_product(req.params.id);
 	if (product == null) {
 		res.render("error", {code: 404, status: "Not found"});
-	} else if ("editor" in req.query) {
-		res.render("shop-product-editor", product.flat_fields());
 	} else {
 		res.render("shop-product", product.flat_fields());
+	}
+});
+
+router.get("/:id/editor", (req, res) => {
+	let product = api.get_product(req.params.id);
+	if (product == null) {
+		res.render("error", {code: 404, status: "Not found"});
+	} else {
+		res.render("shop-product-editor", product.flat_fields());
 	}
 });
 

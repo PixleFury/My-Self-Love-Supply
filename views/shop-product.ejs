@@ -8,13 +8,14 @@
 	<title><%= title %></title>
 </head>
 <body>
+	<%- include("partials/header") %>
 	<main>
 		<div id="product-form" class="panel">
 			<h1><%= title %></h1>
-			<p>£<%= price %></p>
-			<img src="<%= icon %>">
-			<p><%= desc %></p>
-			<a href="/shop/<%= api_id %>?editor">Go to editor.</a>
+			<p>£<%= variants[0].price %></p>
+			<img src="<%= images[0] != null ? images[0].src : '' %>">
+			<p><%= body_html %></p>
+			<a href="/shop/<%= api_id %>/editor">Go to editor.</a>
 		</div>
 	</main>
 </body>

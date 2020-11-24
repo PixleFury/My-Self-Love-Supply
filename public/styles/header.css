@@ -1,0 +1,20 @@
+/* #navbar * {outline: solid 1px red;} */
+
+#navbar {
+	position: sticky;
+	top: 0;
+	width: 100%;
+	background: pink;
+}
+
+#navbar > ul {
+	display: flex;
+	flex-direction: row;
+	list-style: none;
+	margin: auto;
+	width: max-content;
+}
+
+#navbar a {
+	display: block;
+}
