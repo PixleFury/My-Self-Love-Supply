@@ -18,11 +18,9 @@ api.populate_from_api();
 
 // Shop homepage
 router.get("/", (req, res) => {
-	if ("editor" in req.body) {
-		res.sendFile("shop.html", {root: path.join(__dirname, "../public")});
-	} else {
-		res.sendFile("shop.html", {root: path.join(__dirname, "../public")});
-	}
+	let products = [];
+	api.products.forEach(product => products.push(product.flat_fields()));
+	res.render("shop", {products: products});
 });
 
 router.get("/:id", (req, res) => {

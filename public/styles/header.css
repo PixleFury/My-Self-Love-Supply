@@ -1,10 +1,16 @@
 /* #navbar * {outline: solid 1px red;} */
 
+#page-header {
+	padding: 2em;
+	background: white;
+}
+
 #navbar {
 	position: sticky;
 	top: 0;
 	width: 100%;
-	background: pink;
+	background: white;
+	box-shadow: 0 0 4px 1px #0004;
 }
 
 #navbar > ul {
@@ -13,8 +19,11 @@
 	list-style: none;
 	margin: auto;
 	width: max-content;
+	align-items: center;
 }
 
 #navbar a {
 	display: block;
+	padding: 1em 2em;
+	font-size: 16px;
 }

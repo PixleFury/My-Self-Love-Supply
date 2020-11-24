@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/styles/style.css">
+	<link rel="stylesheet" href="/styles/shop.css">
+	<title>Shop | All Products</title>
+</head>
+<body>
+	<%- include("partials/header") %>
+	<main>
+		<header id="products-header">
+			<h1>All Products</h1>
+		</header>
+		<ul id="products-list">
+			<% for(var i = 0; i < products.length; i++) { %>
+				<li class="panel product">
+					<img src="<%= products[i].images[0] != null ? products[i].images[0].src : '' %>">
+					<span><%= products[i].title %></span>
+					<button id="add-to-basket">Add to Basket - £<%= products[i].variants[0].price %></button>
+					<a href="/shop/<%= products[i].api_id %>/editor">Edit details</a>
+				</li>
+			<% } %>
+		</ul>
+	</main>
+</body>
+</html>

@@ -6,6 +6,12 @@
 body {
 	font-size: 14px;
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background: #F2E2E2;
+}
+
+main {
+	margin: 2.5em auto;
+	width: max-content;
 }
 
 a {
