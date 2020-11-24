@@ -4,23 +4,16 @@
 }
 
 body {
+	padding: 50px;
 	font-size: 14px;
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-	background: #F2E2E2;
-}
-
-main {
-	margin: 2.5em auto;
-	width: max-content;
 }
 
 a {
-	color: #009edd;
-	text-decoration: none;
-}
-
-a:hover {
-	text-decoration: underline;
+	color: #00B7FF;
+	padding: 0.5em 2em;
+	border-radius: 2em;
+	width: max-content;
 }
 
 .panel {
@@ -153,7 +146,7 @@ h1{
   /* Links inside the dropdown */
   .dropdown-content a {
 	float: none;
-	color: #594a41;
+	color: black;
 	padding: 12px 16px;
 	text-decoration: none;
 	display: block;
@@ -204,6 +197,11 @@ h1{
 	color: white;
   }
   
+  /* Twitter */
+  .fa-twitter {
+	background: #55ACEE;
+	color: white;
+  }
 
     /* Instagram*/
 	.fa-instagram {
@@ -387,6 +385,14 @@ h1{
   background:#3b5998
 }
 
+/*Twitter*/
+.btn-twitter:hover > i,.btn-twitter:focus > i {
+  color:#55acee
+}
+
+.btn-twitter > span {
+  background:#55acee
+}
 
 
 /*Instagram*/
