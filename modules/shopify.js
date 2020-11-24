@@ -112,11 +112,8 @@ class ShopifyServer {
 		this.products.length = 0; // Clear list
 		this.api_get("products", ["id", "title", "body_html", "variants", "images"], data => {
 			if ("products" in data) {
-				data.products.forEach(product => {
-					let shopify_product = this.from_json(product, "Product");
-					this.products.push(shopify_product);
-					// console.log(shopify_product);
-				});
+				this.products = data.products;
+				console.log(this.products);
 			}
 		});
 	}
@@ -132,14 +129,11 @@ class ShopifyServer {
 			return;
 		}
 
-		let json = {id: id};
-
-		if (product.is_dirty("title")) {json["title"] = product.get("title");}
-		if (product.is_dirty("desc")) {json["body_html"] = product.get("desc");}
-		if (product.is_dirty("images")) {json["images"] = product.get("images");}
+		let json = product.dirty_fields();
+		json.id = product.api_id;
 
 		this.api_put(`products/${id}`, {product: json}, data => console.log(data));
-		product.clean();
+		//product.clean();
 	}
 }
 
@@ -149,10 +143,7 @@ class ShopifyObject {
 		this.api_id = api_id;
 		this.type = type;
 
-		this.fields = {};
-		for (const k in fields) {
-			this.fields[k] = {value: fields[k], dirty: false};
-		}
+		this.fields = fields;
 	}
 
 	get(key) {
@@ -160,7 +151,7 @@ class ShopifyObject {
 	}
 
 	set(key, value) {
-		this.fields[key].value = value;
+		this.fields[key] = value;
 		this.fields[key].dirty = true;
 	}
 
@@ -177,7 +168,16 @@ class ShopifyObject {
 	flat_fields() {
 		let flat = {api_id: this.api_id};
 		for (const k in this.fields) {
-			flat[k] = this.fields[k].value;
+			if (typeof(this.fields[k].value) == "object") {
+				if (Array.isArray(this.fields[k].value)) {
+					flat[k] = [];
+					this.fields[k].value.forEach(val => flat[k].push(typeof(val) == "object" ? val.flat_fields() : val));
+				} else {
+					flat[k] = this.fields[k].value.flat_fields;
+				}
+			} else {
+				flat[k] = this.fields[k].value;
+			}
 		}
 		return flat;
 	}

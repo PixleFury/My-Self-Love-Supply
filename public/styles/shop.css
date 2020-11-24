@@ -4,7 +4,8 @@
 
 #products-list {
 	display: grid;
-	grid-template-columns: repeat(3, min-content);
+	grid-template-columns: repeat(3, 1fr);
+	list-style: none;
 }
 
 .product {
@@ -17,7 +18,7 @@
 	background-color: black;
 }
 
-.product > span {
+.product > h2 {
 	font-size: 20px;
 	font-weight: bold;
 	margin-top: 0.5em; margin-bottom: 1em;
@@ -32,4 +33,14 @@
 	display: inline;
 	padding: 0;
 	margin: 0;
+}
+
+#new-product {
+	padding: 0;
+}
+
+#new-product > a {
+	display: block;
+	width: 100%; height: 100%;
+	text-decoration: none;
 }

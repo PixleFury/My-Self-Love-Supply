@@ -20,7 +20,13 @@ api.populate_from_api();
 router.get("/", (req, res) => {
 	let products = [];
 	api.products.forEach(product => products.push(product.flat_fields()));
-	res.render("shop", {products: products});
+	res.render("shop", {editor: false, products: products});
+});
+
+router.get("/editor", (req, res) => {
+	let products = [];
+	api.products.forEach(product => products.push(product.flat_fields()));
+	res.render("shop", {editor: true, products: products});
 });
 
 router.get("/:id", (req, res) => {
@@ -28,7 +34,7 @@ router.get("/:id", (req, res) => {
 	if (product == null) {
 		res.render("error", {code: 404, status: "Not found"});
 	} else {
-		res.render("shop-product", product.flat_fields());
+		res.render("shop-product", {product: product.flat_fields()});
 	}
 });
 
@@ -37,7 +43,7 @@ router.get("/:id/editor", (req, res) => {
 	if (product == null) {
 		res.render("error", {code: 404, status: "Not found"});
 	} else {
-		res.render("shop-product-editor", product.flat_fields());
+		res.render("shop-product-editor", {editor: true, product: product.flat_fields()});
 	}
 });
 
@@ -65,13 +71,15 @@ router.post("/api/product/:id", (req, res) => {
 		product.set("title", req.body.title);
 	}
 	if ("desc" in req.body && req.body.desc != null) {
-		product.set("desc", req.body.desc);
+		product.set("body_html", req.body.desc);
 	}
 	if ("icon" in req.body && req.body.icon != null) {
-		product.set("icon", req.body.icon);
+		let images = product.get("images");
+		images[0].set("src", req.body.icon);
 	}
 	if ("price" in req.body && req.body.price != null) {
-		product.set("price", req.body.price);
+		let variants = product.get("variants");
+		variants[0].set("price", req.body.price);
 	}
 
 	api.update_product(req.params.id);
