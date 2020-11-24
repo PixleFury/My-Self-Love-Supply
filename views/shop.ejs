@@ -11,15 +11,17 @@
 	<%- include("partials/header") %>
 	<main>
 		<header id="products-header">
-			<h1>All Products</h1>
+			<h1>Our Products</h1>
+			<p>Have a look through our range of products.</p>
 		</header>
 		<ul id="products-list">
 			<% for(var i = 0; i < products.length; i++) { %>
 				<li class="panel product">
 					<img src="<%= products[i].images[0] != null ? products[i].images[0].src : '/images/no-icon.png' %>">
 					<h2><a href="/shop/<%= products[i].api_id %>"><%= products[i].title %></a></h2>
+					<p><%- products[i].description %></p>
 					<button id="add-to-basket">Add to Basket - <%= products[i].variants[0].price == 0 ? 'FREE' : '£' + products[i].variants[0].price %></button>
-					<% if (editor) { %><a href="/shop/<%= products[i].api_id %>/editor">Edit details</a><% } %>
+					<% if (editor) { %><a id="editor-link" href="/shop/<%= products[i].api_id %>/editor">Edit Details...</a><% } %>
 				</li>
 			<% } %>
 			<% if (editor) { %>
