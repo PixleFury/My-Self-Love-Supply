@@ -397,3 +397,18 @@ h1{
 .btn-instagram > span {
   background:#000000
 }
+
+p{
+	color: #594a41;
+}
+
+h4{
+	color: #594a41;
+	text-align: center;
+	display: block;
+	margin-top: 0.67em;
+	margin-bottom: 4.00em;
+	margin-left: 10.00em;
+	margin-right: 10.00em;
+	line-height: 2;
+}

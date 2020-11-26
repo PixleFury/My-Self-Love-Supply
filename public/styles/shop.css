@@ -1,6 +1,5 @@
-#products-header, #affiliates-header {
+#products-header {
 	font-size: 20px;
-	text-align: center;
 }
 
 #products-list {
@@ -55,29 +54,4 @@
 
 #editor-link {
 	text-align: right;
-}
-
-#affiliates-list {
-	list-style: none;
-}
-
-.affiliate-product {
-	display: flex;
-	justify-content: flex-start;
-	max-width: 800px;
-}
-
-.affiliate-product > img {
-	display: inline;
-	width: 256px; height: 256px;
-	background-color: black;
-	margin-right: 2em;
-}
-
-.affiliate-product > div {
-	display: inline-block;
-}
-
-.affiliate-product > div > p {
-	margin-top: 1em;
 }
