@@ -1,8 +1,10 @@
 /* #navbar * {outline: solid 1px red;} */
 
 #page-header {
+	position: relative;
 	padding: 2em;
 	background: white;
+	z-index: 2;
 }
 
 #navbar {

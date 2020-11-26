@@ -1,0 +1,23 @@
+[
+	{
+		"id": "example-link",
+		"title": "Example Affiliate Link",
+		"description": "This product is a fantastic solution to all your problems.",
+		"url": "https://imgix.bustle.com/uploads/image/2018/4/19/9e84d36a-e054-4657-b475-6bb7c49191b1-egg.jpg",
+		"creator": "Life Changing Products"
+	},
+	{
+		"id": "another-link",
+		"title": "Here's Another Example",
+		"description": "Molestiae qui saepe assumenda unde eos. Dolores vero porro aut nisi dolorum qui. Omnis et quaerat est tenetur. Officiis sit est deleniti voluptates est id. Autem aut qui mollitia voluptas quia aut aut.",
+		"url": "https://lipsum.com/",
+		"creator": "Another Company"
+	},
+	{
+		"id": "last-link",
+		"title": "Third and Final Product",
+		"description": "This is just here to give a better example of what more affiliate products would look like.",
+		"url": "",
+		"creator": "Group #2"
+	}
+]

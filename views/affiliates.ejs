@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/styles/style.css">
+	<link rel="stylesheet" href="/styles/shop.css">
+	<title>Shop | All Products</title>
+</head>
+<body>
+	<%- include("partials/header") %>
+	<main>
+		<header id="affiliates-header">
+			<h1>Products We Love</h1>
+			<p>Here are some products from other companies that we think you'll love.</p>
+		</header>
+		<ul id="affiliates-list">
+			<% for(var i = 0; i < affiliates.length; i++) { %>
+				<li class="panel affiliate-product">
+					<img src="/images/affiliates/<%= affiliates[i].id %>.png">
+					<div>
+						<header>
+							<h2><a href="<%= affiliates[i].url %>"><%= affiliates[i].title %></a></h2>
+							<h3>by <%= affiliates[i].creator %></h3>
+						</header>
+						<p><%- affiliates[i].description %></p>
+					</div>
+				</li>
+			<% } %>
+		</ul>
+	</main>
+</body>
+</html>

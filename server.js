@@ -19,6 +19,8 @@ app.use('/', indexRouter);
 const shopRouter = require("./routes/shop")
 app.use('/shop', shopRouter);
 
+const affiliatesRouter = require("./routes/affiliates")
+app.use('/affiliate-products', affiliatesRouter);
 
 app.listen(port, () => {
 	console.log(`Server listening on port ${port}`);
