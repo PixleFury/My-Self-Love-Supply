@@ -1,5 +1,6 @@
-#products-header {
+#products-header, #affiliates-header {
 	font-size: 20px;
+	text-align: center;
 }
 
 #products-list {
@@ -54,4 +55,27 @@
 
 #editor-link {
 	text-align: right;
+}
+
+#affiliates-list {
+	list-style: none;
+	max-width: 1000px;
+}
+
+.affiliate-product {
+	display: flex;
+	flex-direction: row;
+}
+
+.affiliate-product > :is(div, img) {
+	display: inline-block;
+}
+
+.affiliate-product > img {
+	width: 256px; height: 256px;
+	margin-right: 2em;
+}
+
+.affiliate-product > div > header {
+	margin-bottom: 1em;
 }
