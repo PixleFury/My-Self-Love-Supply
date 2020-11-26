@@ -28,7 +28,7 @@
 
 			<h2>Upload an icon</h2>
 			<div class="file-uploader">
-				<img id="icon-preview" src="<%= product.images[0] != null ? product.images[0].src : '' %>">
+				<img id="icon-preview" src="/images/products/<%= product.api_id %>.png">
 				<input id="icon" type="file">
 			</div>
 			<div>

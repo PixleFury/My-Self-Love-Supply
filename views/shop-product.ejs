@@ -13,7 +13,7 @@
 		<div id="product-form" class="panel">
 			<h1><%= product.title %></h1>
 			<p>£<%= product.variants[0].price %></p>
-			<img src="<%= product.images[0] != null ? images[0].src : '/images/no-icon.png' %>">
+			<img src="/images/products/<%= product.api_id %>.png">
 			<p><%- product.description %></p>
 			<a href="/shop/<%= product.api_id %>/editor">Go to editor.</a>
 		</div>

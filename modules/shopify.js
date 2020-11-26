@@ -123,42 +123,35 @@ class ShopifyProduct extends ShopifyObject {
 
 		this.variants = [];
 		fields["variants"].forEach(variant => this.variants.push(new ShopifyProductVariant(variant)));
-
-		this.images = [];
-		fields["images"].forEach(img => this.images.push(new ShopifyImage(img)));
 	}
 
 	get_update_json() {
 		let variants = [];
 		this.variants.forEach(variant => variants.push(variant.get_update_json()));
 
-		let images = [];
-		this.images.forEach(img => images.push(img.get_update_json()));
-
 		return {
 			id: this.api_id,
 			title: this.title,
 			body_html: this.description,
 			variants: variants,
-			images: images
 		}
 	}
 }
 
-class ShopifyImage extends ShopifyObject {
-	constructor(fields) {
-		super(fields["id"], "Image");
+// class ShopifyImage extends ShopifyObject {
+// 	constructor(fields) {
+// 		super(fields["id"], "Image");
 
-		this.src = fields["attachment"];
-	}
+// 		this.src = fields["attachment"];
+// 	}
 
-	get_update_json() {
-		return {
-			id: this.api_id,
-			attachment: this.src
-		}
-	}
-}
+// 	get_update_json() {
+// 		return {
+// 			id: this.api_id,
+// 			attachment: this.src
+// 		}
+// 	}
+// }
 
 class ShopifyProductVariant extends ShopifyObject {
 	constructor(fields) {
@@ -177,5 +170,5 @@ class ShopifyProductVariant extends ShopifyObject {
 
 exports.ShopifyServer = ShopifyServer;
 exports.ShopifyProduct = ShopifyProduct;
-exports.ShopifyImage = ShopifyImage;
+// exports.ShopifyImage = ShopifyImage;
 exports.ShopifyProductVariant = ShopifyProductVariant;

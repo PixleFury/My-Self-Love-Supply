@@ -17,7 +17,7 @@
 		<ul id="products-list">
 			<% for(var i = 0; i < products.length; i++) { %>
 				<li class="panel product">
-					<img src="<%= products[i].images[0] != null ? products[i].images[0].src : '/images/no-icon.png' %>">
+					<img src="/images/products/<%= products[i].api_id %>.png">
 					<h2><a href="/shop/<%= products[i].api_id %>"><%= products[i].title %></a></h2>
 					<p><%- products[i].description %></p>
 					<button id="add-to-basket">Add to Basket - <%= products[i].variants[0].price == 0 ? 'FREE' : '£' + products[i].variants[0].price %></button>

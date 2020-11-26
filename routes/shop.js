@@ -4,6 +4,8 @@ const { request } = require("express");
 const router = express.Router();
 const shopify = require("../modules/shopify.js");
 const { RSA_NO_PADDING } = require("constants");
+const { fstat } = require("fs");
+const fs = require("fs");
 
 const api_settings = {
 	key: "021b74c9a0db6e2a2ae1521ee80ebd82",
@@ -69,16 +71,14 @@ router.post("/api/product/:id", (req, res) => {
 	if ("desc" in req.body && req.body.desc != null) {
 		product.description = req.body.desc;
 	}
-	if ("icon" in req.body && req.body.images != null) {
-		req.body.images.forEach(image => {
-			if ("api_id" in image) {
-				product.images.find(img => img.api_id == image.api_id).src, image.src;
-			} else {
-				api.api_post(`/products/${product.api_id}/images`, {"image": {"attachment": image.src}}, data => {
-					product.images.push(new api.ShopifyImage(data.image));
-				});
-			}
-		});
+	if ("icon" in req.body && req.body.icon != null) {
+		// Save the image
+		fs.writeFile(
+			`./public/images/products/${req.params.id}.png`,
+			new Buffer.from(req.body.icon.replace(/^data:image\/png;base64,/, ""), "base64"),
+			"base64",
+			err => console.log(err)
+		);
 	}
 	if ("price" in req.body && req.body.price != null) {
 		product.variants[0].price = req.body.price;
