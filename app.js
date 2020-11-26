@@ -1,41 +1,56 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+// Importing modules
+const express = require('express');
+const app = express();
+const path = require('path');
+const exphbs = require('express-handlebars');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const Handlebars = require('handlebars');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+// Configure Mongoose to connect to MongoDB
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost:27017/mslsdb', {useNewUrlParser: true}).then((db=>{
 
-var app = express();
+console.log('MONGO connected');
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+})).catch(error=> console.log(error));
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+// Configure express
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// View engine setup
+const {select} = require('./helpers/handlebars-helpers');
+app.engine('handlebars', exphbs({defaultLayout: 'home', helpers: {select: select}}));
+app.set('view engine', 'handlebars');
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+// Body Parser 
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+// Load routes 
+const home = require('./routes/home/index');
+const admin = require('./routes/admin/index');
+const posts = require('./routes/admin/posts');
+const { handlebars } = require('hbs');
+
+// Use routes
+app.use('/', home);
+app.use('/admin', admin);
+app.use('/admin/posts', posts);
+
+// Creating a webserver :: 3000
+app.listen(3000, ()=>{
+
+    console.log('listening on port 3000');
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
 
-module.exports = app;
+
+
+
+
+
+
+
+
